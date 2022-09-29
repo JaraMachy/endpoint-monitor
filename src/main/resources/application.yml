@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: endpoint-monitor
+  profiles:
+    active: "@active.spring.profile@"
+  jpa:
+    database: mysql
+    hibernate:
+      use-new-id-generator-mappings: true
+    show-sql: false
+
