@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SecUserRepository extends JpaRepository<SecUser, Long>, ByIdFinder<Long, SecUser> {
 
+    SecUser findByUsername(String username);
+
 }
