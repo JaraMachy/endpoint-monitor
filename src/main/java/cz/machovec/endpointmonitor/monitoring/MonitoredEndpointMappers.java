@@ -3,7 +3,7 @@ package cz.machovec.endpointmonitor.monitoring;
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.GetMonitoredEndpointOut;
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.SaveMonitoredEndpointIn;
 import cz.machovec.endpointmonitor.security.SecUser;
-import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointApiController.SaveMonitoredEndpointReqTo;
+import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointResource.SaveMonitoredEndpointReqTo;
 
 import java.util.ArrayList;
 import java.util.List;

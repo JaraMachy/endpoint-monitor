@@ -21,7 +21,7 @@ import static cz.machovec.endpointmonitor.commons.api.HttpResponses.*;
 @RestController
 @RequestMapping("/api/monitored-endpoints")
 @RequiredArgsConstructor
-public class MonitoredEndpointApiController {
+public class MonitoredEndpointResource {
 
     private final @NonNull MonitoredEndpointService monitoredEndpointService;
 
