@@ -3,6 +3,7 @@ package cz.machovec.endpointmonitor.monitoring;
 import cz.machovec.endpointmonitor.commons.repo.RepoUtils;
 import cz.machovec.endpointmonitor.security.SecUser;
 import cz.machovec.endpointmonitor.security.SecUserRepository;
+import cz.machovec.endpointmonitor.security.SecurityAccessHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.List;
 public class MonitoredEndpointServiceImpl implements MonitoredEndpointService {
 
     private final @NonNull SecUserRepository secUserRepo;
+    private final @NonNull SecurityAccessHelper securityAccessHelper;
     private final @NonNull MonitoredEndpointRepository monitoredEndpointRepo;
     private final @NonNull MonitoredEndpointFactory monitoredEndpointFactory;
 
@@ -24,7 +26,8 @@ public class MonitoredEndpointServiceImpl implements MonitoredEndpointService {
     public Long createMonitoredEndpoint(SaveMonitoredEndpointIn monitoredEndpointIn) {
         Assert.notNull(monitoredEndpointIn, "monitoredEndpointIn must not be null!");
 
-        MonitoredEndpoint monitoredEndpoint = monitoredEndpointFactory.createFrom(monitoredEndpointIn);
+        SecUser secUser = securityAccessHelper.getLoggedUser();
+        MonitoredEndpoint monitoredEndpoint = monitoredEndpointFactory.createFrom(monitoredEndpointIn, secUser);
 
         monitoredEndpointRepo.save(monitoredEndpoint);
 

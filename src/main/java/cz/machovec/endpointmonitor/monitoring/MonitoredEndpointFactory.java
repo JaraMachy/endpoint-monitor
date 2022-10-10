@@ -1,10 +1,7 @@
 package cz.machovec.endpointmonitor.monitoring;
 
-import cz.machovec.endpointmonitor.commons.repo.RepoUtils;
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.SaveMonitoredEndpointIn;
 import cz.machovec.endpointmonitor.security.SecUser;
-import cz.machovec.endpointmonitor.security.SecUserRepository;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -14,13 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(propagation = Propagation.MANDATORY)
 public class MonitoredEndpointFactory {
-    private final @NonNull SecUserRepository secUserRepo;
 
-    public MonitoredEndpoint createFrom(SaveMonitoredEndpointIn in) {
+    public MonitoredEndpoint createFrom(SaveMonitoredEndpointIn in, SecUser secUser) {
         MonitoredEndpoint monitoredEndpoint = new MonitoredEndpoint();
 
-        // TODO: implement real instead of hardcoded user
-        SecUser secUser = RepoUtils.mustFindOneById(1L, secUserRepo);
         monitoredEndpoint.setOwner(secUser);
 
         return mapMonitoredEndpoint(monitoredEndpoint, in);

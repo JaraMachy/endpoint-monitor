@@ -5,6 +5,7 @@ import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.UpdateMon
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.DeleteMonitoredEndpointOut;
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.GetMonitoredEndpointOut;
 
+import cz.machovec.endpointmonitor.security.SecurityAccessHelper;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ import static cz.machovec.endpointmonitor.commons.api.HttpResponses.*;
 public class MonitoredEndpointResource {
 
     private final @NonNull MonitoredEndpointService monitoredEndpointService;
+    private final @NonNull SecurityAccessHelper securityAccessHelper;
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
@@ -86,10 +88,10 @@ public class MonitoredEndpointResource {
 
     @GetMapping("/list")
     public ResponseEntity<?> getMonitoredEndpoints() {
+        Long loggedUserId = securityAccessHelper.getLoggedUserId();
 
         // Call service layer
-        // TODO: implement real instead of hardcoded user
-        List<GetMonitoredEndpointOut> out = monitoredEndpointService.getMonitoredEndpoints(1L);
+        List<GetMonitoredEndpointOut> out = monitoredEndpointService.getMonitoredEndpoints(loggedUserId);
         List<GetMonitoredEndpointResTo> resTo = MonitoredEndpointMappers.fromMonitoredEndpointsOut(out);
 
         return ok(resTo);
