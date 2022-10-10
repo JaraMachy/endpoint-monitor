@@ -19,6 +19,7 @@ public class MonitoredEndpointFactory {
     public MonitoredEndpoint createFrom(SaveMonitoredEndpointIn in) {
         MonitoredEndpoint monitoredEndpoint = new MonitoredEndpoint();
 
+        // TODO: implement real instead of hardcoded user
         SecUser secUser = RepoUtils.mustFindOneById(1L, secUserRepo);
         monitoredEndpoint.setOwner(secUser);
 

@@ -32,6 +32,14 @@ public class MonitoredEndpointServiceImpl implements MonitoredEndpointService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public GetMonitoredEndpointOut getMonitoredEndpoint(Long monitoredEndpointId) {
+        Assert.notNull(monitoredEndpointId, "monitoredEndpointId must not be null!");
+
+        return MonitoredEndpointMappers.fromMonitoredEndpoint(RepoUtils.mustFindOneById(monitoredEndpointId, monitoredEndpointRepo));
+    }
+
+    @Override
     public UpdateMonitoredEndpointOut updateMonitoredEndpoint(SaveMonitoredEndpointIn monitoredEndpointIn, Long monitoredEndpointId) {
         Assert.notNull(monitoredEndpointIn, "monitoredEndpointIn must not be null!");
         Assert.notNull(monitoredEndpointId, "monitoredEndpointId must not be null!");
@@ -63,6 +71,7 @@ public class MonitoredEndpointServiceImpl implements MonitoredEndpointService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GetMonitoredEndpointOut> getMonitoredEndpoints(Long secUserId) {
 
         SecUser requestingSecUser = RepoUtils.mustFindOneById(secUserId, secUserRepo);

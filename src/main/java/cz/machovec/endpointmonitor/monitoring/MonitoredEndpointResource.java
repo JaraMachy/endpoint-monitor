@@ -3,6 +3,7 @@ package cz.machovec.endpointmonitor.monitoring;
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.SaveMonitoredEndpointIn;
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.UpdateMonitoredEndpointOut;
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.DeleteMonitoredEndpointOut;
+import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.GetMonitoredEndpointOut;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -10,11 +11,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static cz.machovec.endpointmonitor.commons.api.HttpResponses.*;
 
@@ -37,9 +43,22 @@ public class MonitoredEndpointResource {
         return created();
     }
 
+    @GetMapping("/{monitoredEndpointId}")
+    @PreAuthorize("@securityAccessHelper.checkMonitoredEndpointOwnership(#monitoredEndpointId, #authentication)")
+    public ResponseEntity<?> getMonitoredEndpoint(@PathVariable Long monitoredEndpointId, Authentication authentication) {
+
+        // Call service layer
+        GetMonitoredEndpointOut out = monitoredEndpointService.getMonitoredEndpoint(monitoredEndpointId);
+        GetMonitoredEndpointResTo resTo = MonitoredEndpointMappers.fromMonitoredEndpointOut(out);
+
+        return ok(resTo);
+
+    }
+
     @PutMapping("/{monitoredEndpointId}")
+    @PreAuthorize("@securityAccessHelper.checkMonitoredEndpointOwnership(#monitoredEndpointId, #authentication)")
     @ResponseStatus(code = HttpStatus.OK)
-    public ResponseEntity<?> updateMonitoredEndpoint(@RequestBody @Valid SaveMonitoredEndpointReqTo reqTo, @PathVariable Long monitoredEndpointId) {
+    public ResponseEntity<?> updateMonitoredEndpoint(@RequestBody @Valid SaveMonitoredEndpointReqTo reqTo, @PathVariable Long monitoredEndpointId, Authentication authentication) {
 
         // Prepare object for service layer
         SaveMonitoredEndpointIn in = MonitoredEndpointMappers.fromSaveMonitoredEndpointReqTo(reqTo);
@@ -52,8 +71,9 @@ public class MonitoredEndpointResource {
         return ok();
     }
 
-    @DeleteMapping("/{monitoredEndpointId}/delete")
-    public ResponseEntity<?> deleteMonitoredEndpoint(@PathVariable Long monitoredEndpointId) {
+    @DeleteMapping("/{monitoredEndpointId}")
+    @PreAuthorize("@securityAccessHelper.checkMonitoredEndpointOwnership(#monitoredEndpointId, #authentication)")
+    public ResponseEntity<?> deleteMonitoredEndpoint(@PathVariable Long monitoredEndpointId, Authentication authentication) {
 
         // Call service layer
         DeleteMonitoredEndpointOut deleteOut = monitoredEndpointService.deleteMonitoredEndpoint(monitoredEndpointId);
@@ -64,7 +84,25 @@ public class MonitoredEndpointResource {
         return ok();
     }
 
-    // TODO: list user's endpoints
+    @GetMapping("/list")
+    public ResponseEntity<?> getMonitoredEndpoints() {
+
+        // Call service layer
+        // TODO: implement real instead of hardcoded user
+        List<GetMonitoredEndpointOut> out = monitoredEndpointService.getMonitoredEndpoints(1L);
+        List<GetMonitoredEndpointResTo> resTo = MonitoredEndpointMappers.fromMonitoredEndpointsOut(out);
+
+        return ok(resTo);
+
+    }
+
+    //~ Transfer objects
+
+    //=====================================//
+    //                                     //
+    //          Request Objects            //
+    //                                     //
+    //=====================================//
 
     @Getter @Setter
     static class SaveMonitoredEndpointReqTo {
@@ -75,5 +113,29 @@ public class MonitoredEndpointResource {
         @NotNull
         private Integer monitoredInterval;
 
+    }
+
+
+    //=====================================//
+    //                                     //
+    //          Response Objects           //
+    //                                     //
+    //=====================================//
+
+    @Getter @Setter
+    static class GetMonitoredEndpointResTo {
+        private Long id;
+        private String name;
+        private String url;
+        private LocalDateTime dateOfCreation;
+        private LocalDateTime dateOfLastCheck;
+        private Integer monitoredInterval;
+        private MonitoredEndpointService.GetMonitoredEndpointOut.UserOut owner;
+
+        @Getter @Setter
+        class UserOut {
+            private Long id;
+            private String username;
+        }
     }
 }

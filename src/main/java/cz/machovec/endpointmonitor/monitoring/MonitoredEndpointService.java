@@ -10,6 +10,8 @@ public interface MonitoredEndpointService {
 
     Long createMonitoredEndpoint(SaveMonitoredEndpointIn saveMonitoredEndpointIn);
 
+    GetMonitoredEndpointOut getMonitoredEndpoint(Long monitoredEndpointId);
+
     UpdateMonitoredEndpointOut updateMonitoredEndpoint(SaveMonitoredEndpointIn saveMonitoredEndpointIn, Long monitoredEnpointId);
 
     DeleteMonitoredEndpointOut deleteMonitoredEndpoint(Long monitoredEndpointId);
