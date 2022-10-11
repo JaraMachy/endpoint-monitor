@@ -4,6 +4,7 @@ import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.GetMonito
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.SaveMonitoredEndpointIn;
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointResource.SaveMonitoredEndpointReqTo;
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointResource.GetMonitoredEndpointResTo;
+import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointResource.GetMonitoredEndpointResTo.UserResTo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ public class MonitoredEndpointMappers {
         out.setMonitoredInterval(monitoredEndpoint.getMonitoredInterval());
         out.setName(monitoredEndpoint.getName());
         out.setUrl(monitoredEndpoint.getUrl());
+
         if (monitoredEndpoint.getOwner() != null) {
             GetMonitoredEndpointOut.UserOut userOut = new GetMonitoredEndpointOut.UserOut();
             userOut.setId(monitoredEndpoint.getOwner().getId());
@@ -41,6 +43,7 @@ public class MonitoredEndpointMappers {
 
     public static SaveMonitoredEndpointIn fromSaveMonitoredEndpointReqTo(SaveMonitoredEndpointReqTo reqTo) {
         SaveMonitoredEndpointIn projectIn = new SaveMonitoredEndpointIn();
+
         projectIn.setUrl(reqTo.getUrl());
         projectIn.setName(reqTo.getName());
         projectIn.setMonitoredInterval(reqTo.getMonitoredInterval());
@@ -60,17 +63,19 @@ public class MonitoredEndpointMappers {
 
     public static GetMonitoredEndpointResTo fromMonitoredEndpointOut(GetMonitoredEndpointOut out) {
         GetMonitoredEndpointResTo resTo = new GetMonitoredEndpointResTo();
+
         resTo.setId(out.getId());
         resTo.setDateOfCreation(out.getDateOfCreation());
         resTo.setDateOfLastCheck(out.getDateOfLastCheck());
         resTo.setMonitoredInterval(out.getMonitoredInterval());
         resTo.setName(out.getName());
         resTo.setUrl(out.getUrl());
+
         if (out.getOwner() != null) {
-            GetMonitoredEndpointOut.UserOut userOut = new GetMonitoredEndpointOut.UserOut();
-            userOut.setId(out.getOwner().getId());
-            userOut.setUsername(out.getOwner().getUsername());
-            resTo.setOwner(userOut);
+            UserResTo userResTo = new UserResTo();
+            userResTo.setId(out.getOwner().getId());
+            userResTo.setUsername(out.getOwner().getUsername());
+            resTo.setOwner(userResTo);
         }
 
         return resTo;

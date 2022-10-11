@@ -4,6 +4,7 @@ import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.SaveMonit
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.UpdateMonitoredEndpointOut;
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.DeleteMonitoredEndpointOut;
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.GetMonitoredEndpointOut;
+import cz.machovec.endpointmonitor.monitoring.MonitoringResultService.GetMonitoringResultOut;
 
 import cz.machovec.endpointmonitor.security.SecurityAccessHelper;
 import lombok.Getter;
@@ -31,6 +32,7 @@ import static cz.machovec.endpointmonitor.commons.api.HttpResponses.*;
 public class MonitoredEndpointResource {
 
     private final @NonNull MonitoredEndpointService monitoredEndpointService;
+    private final @NonNull MonitoringResultService monitoringResultService;
     private final @NonNull SecurityAccessHelper securityAccessHelper;
 
     @PostMapping
@@ -98,6 +100,18 @@ public class MonitoredEndpointResource {
 
     }
 
+    @GetMapping("/{monitoredEndpointId}/monitoring-results")
+    @PreAuthorize("@securityAccessHelper.checkMonitoredEndpointOwnership(#monitoredEndpointId, #authentication)")
+    public ResponseEntity<?> getMonitoringResults(@PathVariable Long monitoredEndpointId, Authentication authentication) {
+
+        // Call service layer
+        List<GetMonitoringResultOut> out = monitoringResultService.getLatest10MonitoringResults(monitoredEndpointId);
+        List<GetMonitoringResultResTo> resTo = MonitoringResultMappers.fromMonitoringResultsOut(out);
+
+        return ok(resTo);
+
+    }
+
     //~ Transfer objects
 
     //=====================================//
@@ -132,12 +146,28 @@ public class MonitoredEndpointResource {
         private LocalDateTime dateOfCreation;
         private LocalDateTime dateOfLastCheck;
         private Integer monitoredInterval;
-        private MonitoredEndpointService.GetMonitoredEndpointOut.UserOut owner;
+        private UserResTo owner;
 
         @Getter @Setter
-        class UserOut {
+        static class UserResTo {
             private Long id;
             private String username;
+        }
+    }
+
+    @Getter
+    @Setter
+    static class GetMonitoringResultResTo {
+        private Long id;
+        private LocalDateTime dateOfCheck;
+        private Integer returnedHttpStatusCode;
+        private String returnedPayload;
+        private MonitoredEndpointResTo monitoredEndpointResTo;
+
+        @Getter @Setter
+        static class MonitoredEndpointResTo {
+            private Long id;
+            private String url;
         }
     }
 }
