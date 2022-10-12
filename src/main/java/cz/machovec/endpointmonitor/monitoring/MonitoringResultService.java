@@ -10,6 +10,8 @@ public interface MonitoringResultService {
 
     List<GetMonitoringResultOut> getLatest10MonitoringResults(Long monitoredEndpointId);
 
+    Long createMonitoringResult(SaveMonitoringResultIn saveMonitoringResultIn, Long monitoredEndpointId);
+
     //////////////////////////////////////////////////////////
     //                                                      //
     //                          GET                         //
@@ -29,5 +31,18 @@ public interface MonitoringResultService {
             private Long id;
             private String url;
         }
+    }
+
+    //////////////////////////////////////////////////////////
+    //                                                      //
+    //                          SAVE                        //
+    //                                                      //
+    //////////////////////////////////////////////////////////
+
+    @Getter @Setter
+    class SaveMonitoringResultIn {
+        private LocalDateTime dateOfCheck;
+        private Integer returnedHttpStatusCode;
+        private String returnedPayload;
     }
 }

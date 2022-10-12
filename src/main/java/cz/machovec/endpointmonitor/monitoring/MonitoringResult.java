@@ -18,7 +18,7 @@ public class MonitoringResult {
     public LocalDateTime dateOfCheck;
     @Column(nullable = false)
     public Integer returnedHttpStatusCode;
-    @Column
+    @Lob
     public String returnedPayload;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "monitored_endpoint_id", nullable = false)

@@ -1,5 +1,6 @@
 package cz.machovec.endpointmonitor.monitoring;
 
+import cz.machovec.endpointmonitor.commons.repo.RepoUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ import java.util.List;
 public class MonitoringResultServiceImpl implements MonitoringResultService {
 
     private final @NonNull MonitoringResultRepository monitoringResultRepo;
+    private final @NonNull MonitoredEndpointRepository monitoredEndpointRepo;
+    private final @NonNull MonitoringResultFactory monitoringResultFactory;
 
     @Override
     @Transactional(readOnly = true)
@@ -23,5 +26,19 @@ public class MonitoringResultServiceImpl implements MonitoringResultService {
         List<MonitoringResult> monitoringResults = monitoringResultRepo.findFirst10ByMonitoredEndpoint_Id(monitoredEndpointId);
 
         return MonitoringResultMappers.fromMonitoringResults(monitoringResults);
+    }
+
+    @Override
+    public Long createMonitoringResult(SaveMonitoringResultIn saveMonitoringResultIn, Long monitoredEndpointId) {
+        Assert.notNull(saveMonitoringResultIn, "saveMonitoringResultIn must not be null!");
+        Assert.notNull(monitoredEndpointId, "monitoredEndpointId must not be null!");
+
+        MonitoredEndpoint monitoredEndpoint = RepoUtils.mustFindOneById(monitoredEndpointId, monitoredEndpointRepo);
+
+        MonitoringResult monitoringResult = monitoringResultFactory.createFrom(saveMonitoringResultIn, monitoredEndpoint);
+
+        monitoringResultRepo.save(monitoringResult);
+
+        return monitoringResult.getId();
     }
 }
