@@ -11,8 +11,7 @@ import java.time.LocalDateTime;
 public class MonitoringResult {
 
     @Id
-    @GeneratedValue(generator="idgen_monitoring_result", strategy= GenerationType.SEQUENCE)
-    @SequenceGenerator(allocationSize = 1, name = "idgen_monitoring_result", sequenceName = "seq_monitoring_result")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     public Long id;
     @Column(nullable = false)
     public LocalDateTime dateOfCheck;

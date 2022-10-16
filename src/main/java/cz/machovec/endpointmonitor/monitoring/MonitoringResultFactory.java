@@ -17,6 +17,7 @@ public class MonitoringResultFactory {
         monitoringResult.setReturnedPayload(in.getReturnedPayload());
         monitoringResult.setReturnedHttpStatusCode(in.getReturnedHttpStatusCode());
         monitoringResult.setDateOfCheck(in.getDateOfCheck());
+        monitoredEndpoint.setDateOfLastCheck(in.getDateOfCheck());
         monitoringResult.setMonitoredEndpoint(monitoredEndpoint);
 
         return monitoringResult;

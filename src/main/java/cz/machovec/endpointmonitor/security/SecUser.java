@@ -1,22 +1,22 @@
 package cz.machovec.endpointmonitor.security;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @Getter @Setter
-@NoArgsConstructor
 public class SecUser {
 
     @Id
-    @GeneratedValue(generator="idgen_sec_user", strategy= GenerationType.SEQUENCE)
-    @SequenceGenerator(allocationSize = 1, name = "idgen_sec_user", sequenceName = "seq_sec_user")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false, unique = true)
     private String username;
+    @Column
     private String password;
+    @Column(nullable = false)
     private String email;
 
 }
