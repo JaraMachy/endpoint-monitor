@@ -88,7 +88,7 @@ public class MonitoredEndpointResource {
         return ok();
     }
 
-    @GetMapping("/list")
+    @GetMapping
     public ResponseEntity<?> getMonitoredEndpoints() {
         Long loggedUserId = securityAccessHelper.getLoggedUserId();
 
