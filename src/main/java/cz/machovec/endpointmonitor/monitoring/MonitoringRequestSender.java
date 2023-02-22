@@ -8,9 +8,7 @@ import org.springframework.web.client.RestTemplate;
 
 import cz.machovec.endpointmonitor.monitoring.MonitoringResultService.SaveMonitoringResultIn;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.TimeZone;
 
 @Component
 @RequiredArgsConstructor
@@ -18,7 +16,7 @@ public class MonitoringRequestSender {
 
     private final @NonNull RestTemplate restTemplate;
 
-    public SaveMonitoringResultIn sendRequest(String url) {
+    public SaveMonitoringResultIn sendRequest(String url, LocalDateTime scheduledTime) {
         SaveMonitoringResultIn saveMonitoringResultIn = new SaveMonitoringResultIn();
 
         ResponseEntity<?> response = this.restTemplate.getForEntity(url, String.class);
@@ -26,9 +24,7 @@ public class MonitoringRequestSender {
         saveMonitoringResultIn.setReturnedHttpStatusCode(response.getStatusCodeValue());
         saveMonitoringResultIn.setReturnedPayload(response.getBody().toString());
 
-        long responseTimestamp = response.getHeaders().getDate();
-        LocalDateTime responseDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(responseTimestamp), TimeZone.getDefault().toZoneId());
-        saveMonitoringResultIn.setDateOfCheck(responseDateTime);
+        saveMonitoringResultIn.setDateOfCheck(scheduledTime);
 
         return saveMonitoringResultIn;
     }

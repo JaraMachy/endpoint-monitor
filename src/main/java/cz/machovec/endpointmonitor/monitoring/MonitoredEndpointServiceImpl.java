@@ -5,7 +5,7 @@ import cz.machovec.endpointmonitor.security.SecUser;
 import cz.machovec.endpointmonitor.security.SecUserRepository;
 import cz.machovec.endpointmonitor.security.SecurityAccessHelper;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -14,13 +14,25 @@ import java.util.List;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class MonitoredEndpointServiceImpl implements MonitoredEndpointService {
 
     private final @NonNull SecUserRepository secUserRepo;
     private final @NonNull SecurityAccessHelper securityAccessHelper;
     private final @NonNull MonitoredEndpointRepository monitoredEndpointRepo;
     private final @NonNull MonitoredEndpointFactory monitoredEndpointFactory;
+    private final MonitoringThreadPoolManager monitoringThreadPoolManager;
+
+    public MonitoredEndpointServiceImpl(@NonNull SecUserRepository secUserRepo,
+                                        @NonNull SecurityAccessHelper securityAccessHelper,
+                                        @NonNull MonitoredEndpointRepository monitoredEndpointRepo,
+                                        @NonNull MonitoredEndpointFactory monitoredEndpointFactory,
+                                        @Lazy MonitoringThreadPoolManager monitoringThreadPoolManager) {
+        this.secUserRepo = secUserRepo;
+        this.securityAccessHelper = securityAccessHelper;
+        this.monitoredEndpointRepo = monitoredEndpointRepo;
+        this.monitoredEndpointFactory = monitoredEndpointFactory;
+        this.monitoringThreadPoolManager = monitoringThreadPoolManager;
+    }
 
     @Override
     public Long createMonitoredEndpoint(SaveMonitoredEndpointIn monitoredEndpointIn) {
@@ -30,6 +42,8 @@ public class MonitoredEndpointServiceImpl implements MonitoredEndpointService {
         MonitoredEndpoint monitoredEndpoint = monitoredEndpointFactory.createFrom(monitoredEndpointIn, secUser);
 
         monitoredEndpointRepo.save(monitoredEndpoint);
+
+        monitoringThreadPoolManager.createTask(monitoredEndpoint.getId());
 
         return monitoredEndpoint.getId();
     }
@@ -55,6 +69,8 @@ public class MonitoredEndpointServiceImpl implements MonitoredEndpointService {
         monitoredEndpointRepo.save(monitoredEndpoint);
         out.setUpdated(true);
 
+        monitoringThreadPoolManager.updateTask(monitoredEndpoint.getId());
+
         return out;
     }
 
@@ -70,6 +86,8 @@ public class MonitoredEndpointServiceImpl implements MonitoredEndpointService {
 
         out.setDeleted(true);
 
+        monitoringThreadPoolManager.deleteTask(out.getMonitoredEndpointId());
+
         return out;
     }
 
@@ -81,5 +99,23 @@ public class MonitoredEndpointServiceImpl implements MonitoredEndpointService {
         List<MonitoredEndpoint> monitoredEndpoints = monitoredEndpointRepo.findAllByOwner(requestingSecUser);
 
         return MonitoredEndpointMappers.fromMonitoredEndpoints(monitoredEndpoints);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MonitoredEndpointReq getMonitoredEndpointReq(Long monitoredEndpointId) {
+
+        MonitoredEndpoint monitoredEndpoint = RepoUtils.mustFindOneById(monitoredEndpointId, monitoredEndpointRepo);
+
+        return MonitoredEndpointMappers.fromMonitoredEndpointToReq(monitoredEndpoint);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MonitoredEndpointReq> getAllMonitoredEndpointReqs() {
+
+        List<MonitoredEndpoint> monitoredEndpoints = monitoredEndpointRepo.findAll();
+
+        return MonitoredEndpointMappers.fromMonitoredEndpointToReqs(monitoredEndpoints);
     }
 }

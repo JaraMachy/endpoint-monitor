@@ -2,6 +2,7 @@ package cz.machovec.endpointmonitor.monitoring;
 
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.GetMonitoredEndpointOut;
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.SaveMonitoredEndpointIn;
+import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.MonitoredEndpointReq;
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointResource.SaveMonitoredEndpointReqTo;
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointResource.GetMonitoredEndpointResTo;
 import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointResource.GetMonitoredEndpointResTo.UserResTo;
@@ -37,6 +38,26 @@ public class MonitoredEndpointMappers {
             userOut.setUsername(monitoredEndpoint.getOwner().getUsername());
             out.setOwner(userOut);
         }
+
+        return out;
+    }
+
+    public static List<MonitoredEndpointReq> fromMonitoredEndpointToReqs(List<MonitoredEndpoint> monitoredEndpoints) {
+        List<MonitoredEndpointReq> listOut = new ArrayList<>();
+
+        for (MonitoredEndpoint item : monitoredEndpoints) {
+            listOut.add(fromMonitoredEndpointToReq(item));
+        }
+
+        return listOut;
+    }
+
+    public static MonitoredEndpointReq fromMonitoredEndpointToReq(MonitoredEndpoint monitoredEndpoint) {
+        MonitoredEndpointReq out = new MonitoredEndpointReq();
+
+        out.setId(monitoredEndpoint.getId());
+        out.setUrl(monitoredEndpoint.getUrl());
+        out.setDateOfNextCheck(monitoredEndpoint.getDateOfNextCheck());
 
         return out;
     }

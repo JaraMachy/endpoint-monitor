@@ -18,6 +18,10 @@ public interface MonitoredEndpointService {
 
     List<GetMonitoredEndpointOut> getMonitoredEndpoints(Long secUserId);
 
+    MonitoredEndpointReq getMonitoredEndpointReq(Long monitoredEndpointId);
+
+    List<MonitoredEndpointReq> getAllMonitoredEndpointReqs();
+
     //////////////////////////////////////////////////////////
     //                                                      //
     //                          GET                         //
@@ -72,4 +76,16 @@ public interface MonitoredEndpointService {
         private boolean deleted = false;
     }
 
+    //////////////////////////////////////////////////////////
+    //                                                      //
+    //                        REQUEST                       //
+    //                                                      //
+    //////////////////////////////////////////////////////////
+
+    @Getter @Setter
+    class MonitoredEndpointReq {
+        private Long id;
+        private String url;
+        private LocalDateTime dateOfNextCheck;
+    }
 }
