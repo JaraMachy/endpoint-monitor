@@ -7,6 +7,7 @@ import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.GetMonito
 import cz.machovec.endpointmonitor.monitoring.MonitoringResultService.GetMonitoringResultOut;
 
 import cz.machovec.endpointmonitor.security.SecurityAccessHelper;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import java.util.List;
 import static cz.machovec.endpointmonitor.commons.api.HttpResponses.*;
 
 @RestController
+@SecurityRequirement(name = "JWT")
 @RequestMapping("/api/monitored-endpoints")
 @RequiredArgsConstructor
 public class MonitoredEndpointResource {
