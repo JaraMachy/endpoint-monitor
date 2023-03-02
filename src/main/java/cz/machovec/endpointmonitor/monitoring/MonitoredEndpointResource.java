@@ -7,6 +7,9 @@ import cz.machovec.endpointmonitor.monitoring.MonitoredEndpointService.GetMonito
 import cz.machovec.endpointmonitor.monitoring.MonitoringResultService.GetMonitoringResultOut;
 
 import cz.machovec.endpointmonitor.security.SecurityAccessHelper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.Getter;
 import lombok.NonNull;
@@ -39,18 +42,29 @@ public class MonitoredEndpointResource {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
+    @Operation(description = "Creates new monitored endpoint.")
+    @ApiResponses(
+            value = {@ApiResponse(responseCode = "201", description = "created"),
+                    @ApiResponse(responseCode = "403", description = "forbidden")}
+    )
     public ResponseEntity<?> createMonitoredEndpoint(@RequestBody @Valid SaveMonitoredEndpointReqTo reqTo) {
 
         // Prepare object for service layer
         SaveMonitoredEndpointIn in = MonitoredEndpointMappers.fromSaveMonitoredEndpointReqTo(reqTo);
         // Call service layer
-        monitoredEndpointService.createMonitoredEndpoint(in);
+        Long monitoredEndpointId = monitoredEndpointService.createMonitoredEndpoint(in);
 
-        return created();
+        return ResponseEntity.status(HttpStatus.CREATED).header("Location", "/api/monitored-endpoints/" + monitoredEndpointId).build();
     }
 
     @GetMapping("/{monitoredEndpointId}")
     @PreAuthorize("@securityAccessHelper.checkMonitoredEndpointOwnership(#monitoredEndpointId, #authentication)")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(description = "Gets detail of monitored endpoint by id.")
+    @ApiResponses(
+            value = {@ApiResponse(responseCode = "200", description = "ok"),
+                    @ApiResponse(responseCode = "403", description = "forbidden")}
+    )
     public ResponseEntity<?> getMonitoredEndpoint(@PathVariable Long monitoredEndpointId, Authentication authentication) {
 
         // Call service layer
@@ -63,7 +77,13 @@ public class MonitoredEndpointResource {
 
     @PutMapping("/{monitoredEndpointId}")
     @PreAuthorize("@securityAccessHelper.checkMonitoredEndpointOwnership(#monitoredEndpointId, #authentication)")
-    @ResponseStatus(code = HttpStatus.OK)
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(description = "Updates monitored endpoint with given id.")
+    @ApiResponses(
+            value = {@ApiResponse(responseCode = "200", description = "ok"),
+                    @ApiResponse(responseCode = "400", description = "bad request"),
+                    @ApiResponse(responseCode = "403", description = "forbidden")}
+    )
     public ResponseEntity<?> updateMonitoredEndpoint(@RequestBody @Valid SaveMonitoredEndpointReqTo reqTo, @PathVariable Long monitoredEndpointId, Authentication authentication) {
 
         // Prepare object for service layer
@@ -79,6 +99,13 @@ public class MonitoredEndpointResource {
 
     @DeleteMapping("/{monitoredEndpointId}")
     @PreAuthorize("@securityAccessHelper.checkMonitoredEndpointOwnership(#monitoredEndpointId, #authentication)")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(description = "Deletes monitored endpoint by given id.")
+    @ApiResponses(
+            value = {@ApiResponse(responseCode = "200", description = "ok"),
+                    @ApiResponse(responseCode = "400", description = "bad request"),
+                    @ApiResponse(responseCode = "403", description = "forbidden")}
+    )
     public ResponseEntity<?> deleteMonitoredEndpoint(@PathVariable Long monitoredEndpointId, Authentication authentication) {
 
         // Call service layer
@@ -91,6 +118,12 @@ public class MonitoredEndpointResource {
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(description = "Gets monitored endpoint list of authenticated user.")
+    @ApiResponses(
+            value = {@ApiResponse(responseCode = "200", description = "ok"),
+                    @ApiResponse(responseCode = "403", description = "forbidden")}
+    )
     public ResponseEntity<?> getMonitoredEndpoints() {
         Long loggedUserId = securityAccessHelper.getLoggedUserId();
 
@@ -104,6 +137,12 @@ public class MonitoredEndpointResource {
 
     @GetMapping("/{monitoredEndpointId}/monitoring-results")
     @PreAuthorize("@securityAccessHelper.checkMonitoredEndpointOwnership(#monitoredEndpointId, #authentication)")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(description = "Gets last 10 monitoring results of monitored endpoint by given id.")
+    @ApiResponses(
+            value = {@ApiResponse(responseCode = "200", description = "ok"),
+                    @ApiResponse(responseCode = "403", description = "forbidden")}
+    )
     public ResponseEntity<?> getMonitoringResults(@PathVariable Long monitoredEndpointId, Authentication authentication) {
 
         // Call service layer
