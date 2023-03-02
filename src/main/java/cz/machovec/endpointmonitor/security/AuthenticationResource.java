@@ -1,14 +1,16 @@
 package cz.machovec.endpointmonitor.security;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import cz.machovec.endpointmonitor.exceptions.InvalidUsernameOrPasswordException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
@@ -28,15 +30,20 @@ public class AuthenticationResource {
     private JwtUtils jwtUtils;
 
     @PostMapping(value = "/authenticate")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(description = "Gets JWT token for given credentials.")
+    @ApiResponses(
+            value = {@ApiResponse(responseCode = "200", description = "ok"),
+                    @ApiResponse(responseCode = "401", description = "unauthorized")})
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationReqTo authenticationReqTo) throws Exception {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationReqTo.getUsername(), authenticationReqTo.getPassword())
             );
-        } catch (BadCredentialsException e) {
-            throw new Exception("Incorrect username or password", e);
+        } catch (AuthenticationException e) {
+            throw new InvalidUsernameOrPasswordException();
         }
-        // At this point authentication is successfully
+        // At this point authentication is sucessfull
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationReqTo.getUsername());
 
@@ -48,7 +55,7 @@ public class AuthenticationResource {
     //~ Transfer objects
 
     @Getter @Setter
-    private static class AuthenticationReqTo {
+    public static class AuthenticationReqTo {
         @NotBlank
         @NotNull
         private String username;
@@ -59,7 +66,8 @@ public class AuthenticationResource {
 
     @Getter @Setter
     @AllArgsConstructor
-    private static class AuthenticationResTo {
+    @NoArgsConstructor
+    public static class AuthenticationResTo {
         private String jwtToken;
     }
 
