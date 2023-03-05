@@ -2,7 +2,7 @@ package cz.machovec.endpointmonitor.monitoring;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,11 +19,14 @@ public class MonitoringRequestSender {
     public SaveMonitoringResultIn sendRequest(String url, LocalDateTime scheduledTime) {
         SaveMonitoringResultIn saveMonitoringResultIn = new SaveMonitoringResultIn();
 
-        ResponseEntity<?> response = this.restTemplate.getForEntity(url, String.class);
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        String responseBody = response.getBody();
 
         saveMonitoringResultIn.setReturnedHttpStatusCode(response.getStatusCodeValue());
-        saveMonitoringResultIn.setReturnedPayload(response.getBody().toString());
-
+        saveMonitoringResultIn.setReturnedPayload(responseBody);
         saveMonitoringResultIn.setDateOfCheck(scheduledTime);
 
         return saveMonitoringResultIn;

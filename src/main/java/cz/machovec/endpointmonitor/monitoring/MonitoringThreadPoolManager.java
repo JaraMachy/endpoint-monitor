@@ -81,7 +81,7 @@ public class MonitoringThreadPoolManager {
         int millis = (int) ChronoUnit.MILLIS.between(LocalDateTime.now(), req.getDateOfNextCheck());
         if (millis < 0 ) millis = 0;
 
-        // add task to thread pool. After task is executed its deleted from thread pool (aspon myslim)
+        // add task to thread pool. After task is executed its deleted from thread pool
         ScheduledFuture<?> futureThread = threadPool.schedule(task, millis, TimeUnit.MILLISECONDS);
         runningThreads.put(task.getEndpointId(), futureThread);
     }
