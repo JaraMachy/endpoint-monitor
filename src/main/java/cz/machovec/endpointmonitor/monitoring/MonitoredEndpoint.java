@@ -35,7 +35,7 @@ public class MonitoredEndpoint {
     private Set<MonitoringResult> monitoringResults;
 
     public LocalDateTime getDateOfNextCheck() {
-        if (this.getDateOfLastCheck() != null) {
+        if (this.getDateOfLastCheck() != null && this.getDateOfLastCheck().plusSeconds(monitoredInterval).isAfter(LocalDateTime.now())) {
             return this.getDateOfLastCheck().plusSeconds(monitoredInterval);
         } else {
             return LocalDateTime.now();

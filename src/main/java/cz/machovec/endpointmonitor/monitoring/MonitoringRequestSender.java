@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import cz.machovec.endpointmonitor.monitoring.MonitoringResultService.SaveMonitoringResultIn;
@@ -22,7 +23,7 @@ public class MonitoringRequestSender {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = sendErrorStatusCodeResistantRequest(url, entity);
         String responseBody = response.getBody();
 
         saveMonitoringResultIn.setReturnedHttpStatusCode(response.getStatusCodeValue());
@@ -30,6 +31,15 @@ public class MonitoringRequestSender {
         saveMonitoringResultIn.setDateOfCheck(scheduledTime);
 
         return saveMonitoringResultIn;
+    }
+
+    private ResponseEntity<String> sendErrorStatusCodeResistantRequest(String url, HttpEntity<String> entity) {
+        try {
+            return restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        } catch (HttpStatusCodeException e) {
+            return ResponseEntity.status(e.getRawStatusCode()).headers(e.getResponseHeaders())
+                    .body(e.getResponseBodyAsString());
+        }
     }
 
 }
