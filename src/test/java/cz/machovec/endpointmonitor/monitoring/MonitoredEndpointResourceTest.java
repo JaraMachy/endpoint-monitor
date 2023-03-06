@@ -125,6 +125,48 @@ public class MonitoredEndpointResourceTest extends BasicWebTest {
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testCreateMonitoredEndpoint_incorrectUrl(){
+        SaveMonitoredEndpointReqTo reqTo;
+        HttpEntity<SaveMonitoredEndpointReqTo> request;
+        ResponseEntity<?> resp;
+
+        // Setup
+        String url = "/api/monitored-endpoints";
+        String correctToken = jwtTokenTest.getCorrectToken("Tyrion Lannister");
+        reqTo = saveMonitoredEndpointReqTo_incorrectUrl();
+        request = new HttpEntity<>(reqTo, httpHeaders(correctToken));
+
+        // When
+        resp = restTemplate.exchange(url, HttpMethod.POST, request, Void.class);
+
+        // Then
+        assertNotNull(resp);
+        assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testCreateMonitoredEndpoint_incorrectInterval(){
+        SaveMonitoredEndpointReqTo reqTo;
+        HttpEntity<SaveMonitoredEndpointReqTo> request;
+        ResponseEntity<?> resp;
+
+        // Setup
+        String url = "/api/monitored-endpoints";
+        String correctToken = jwtTokenTest.getCorrectToken("Tyrion Lannister");
+        reqTo = saveMonitoredEndpointReqTo_incorrectInterval();
+        request = new HttpEntity<>(reqTo, httpHeaders(correctToken));
+
+        // When
+        resp = restTemplate.exchange(url, HttpMethod.POST, request, Void.class);
+
+        // Then
+        assertNotNull(resp);
+        assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void testCreateMonitoredEndpoint_badToken(){
         SaveMonitoredEndpointReqTo reqTo;
         HttpEntity<SaveMonitoredEndpointReqTo> request;
@@ -196,6 +238,49 @@ public class MonitoredEndpointResourceTest extends BasicWebTest {
         assertEquals("ČSFD", updateEndpointAfter.getName());
         assertEquals("https://www.csfd.cz/", updateEndpointAfter.getUrl());
         assertEquals(12, updateEndpointAfter.getMonitoredInterval());
+    }
+
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testUpdateMonitoredEndpoint_incorrectUrl(){
+        SaveMonitoredEndpointReqTo reqTo;
+        HttpEntity<SaveMonitoredEndpointReqTo> request;
+        ResponseEntity<?> resp;
+
+        // Setup
+        String url = "/api/monitored-endpoints/1000";
+        String correctToken = jwtTokenTest.getCorrectToken("Tyrion Lannister");
+        reqTo = saveMonitoredEndpointReqTo_incorrectUrl();
+        request = new HttpEntity<>(reqTo, httpHeaders(correctToken));
+
+        // When
+        resp = restTemplate.exchange(url, HttpMethod.PUT, request, Void.class);
+
+        // Then
+        assertNotNull(resp);
+        assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    public void testUpdateMonitoredEndpoint_incorrectInterval(){
+        SaveMonitoredEndpointReqTo reqTo;
+        HttpEntity<SaveMonitoredEndpointReqTo> request;
+        ResponseEntity<?> resp;
+
+        // Setup
+        String url = "/api/monitored-endpoints/1000";
+        String correctToken = jwtTokenTest.getCorrectToken("Tyrion Lannister");
+        reqTo = saveMonitoredEndpointReqTo_incorrectInterval();
+        request = new HttpEntity<>(reqTo, httpHeaders(correctToken));
+
+        // When
+        resp = restTemplate.exchange(url, HttpMethod.PUT, request, Void.class);
+
+        // Then
+        assertNotNull(resp);
+        assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
     }
 
     @Test
@@ -424,6 +509,24 @@ public class MonitoredEndpointResourceTest extends BasicWebTest {
         monitoredEndpointReqTo.setName("ČSFD");
         monitoredEndpointReqTo.setUrl("https://www.csfd.cz/");
         monitoredEndpointReqTo.setMonitoredInterval(12);
+
+        return monitoredEndpointReqTo;
+    }
+
+    private SaveMonitoredEndpointReqTo saveMonitoredEndpointReqTo_incorrectUrl() {
+        SaveMonitoredEndpointReqTo monitoredEndpointReqTo = new SaveMonitoredEndpointReqTo();
+        monitoredEndpointReqTo.setName("ČSFD");
+        monitoredEndpointReqTo.setUrl("www.csfd.cz/");
+        monitoredEndpointReqTo.setMonitoredInterval(12);
+
+        return monitoredEndpointReqTo;
+    }
+
+    private SaveMonitoredEndpointReqTo saveMonitoredEndpointReqTo_incorrectInterval() {
+        SaveMonitoredEndpointReqTo monitoredEndpointReqTo = new SaveMonitoredEndpointReqTo();
+        monitoredEndpointReqTo.setName("ČSFD");
+        monitoredEndpointReqTo.setUrl("https://www.csfd.cz/");
+        monitoredEndpointReqTo.setMonitoredInterval(0);
 
         return monitoredEndpointReqTo;
     }

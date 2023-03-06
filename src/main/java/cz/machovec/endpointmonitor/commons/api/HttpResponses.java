@@ -3,6 +3,9 @@ package cz.machovec.endpointmonitor.commons.api;
 import cz.machovec.endpointmonitor.commons.ErrorTo;
 import org.springframework.http.ResponseEntity;
 
+import java.net.URI;
+import java.util.List;
+
 import static org.springframework.http.HttpStatus.*;
 
 public class HttpResponses {
@@ -11,7 +14,9 @@ public class HttpResponses {
 
     public static <T> ResponseEntity<T> ok(T to) { return new ResponseEntity<>(to, OK); }
 
-    public static <T> ResponseEntity<T> created() { return new ResponseEntity<>(CREATED); }
+    public static <T> ResponseEntity<T> created(String createdPath) {
+        return ResponseEntity.created(URI.create(createdPath)).build();
+    }
 
     public static <T> ResponseEntity<T> unauthorized() { return new ResponseEntity<>(UNAUTHORIZED); }
 
@@ -24,7 +29,10 @@ public class HttpResponses {
         return new ResponseEntity<>(FORBIDDEN);
     }
 
-    public static <T> ResponseEntity<T> badRequest() { return new ResponseEntity<>(BAD_REQUEST);
+    public static <T> ResponseEntity<T> badRequest() { return new ResponseEntity<>(BAD_REQUEST); }
+
+    public static ResponseEntity<List<String>> badRequest(List<String> messages) {
+        return ResponseEntity.badRequest().body(messages);
     }
 
 }

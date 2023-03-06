@@ -22,8 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,6 +44,7 @@ public class MonitoredEndpointResource {
     @Operation(description = "Creates new monitored endpoint.")
     @ApiResponses(
             value = {@ApiResponse(responseCode = "201", description = "created"),
+                    @ApiResponse(responseCode = "400", description = "bad request"),
                     @ApiResponse(responseCode = "403", description = "forbidden")}
     )
     public ResponseEntity<?> createMonitoredEndpoint(@RequestBody @Valid SaveMonitoredEndpointReqTo reqTo) {
@@ -54,7 +54,7 @@ public class MonitoredEndpointResource {
         // Call service layer
         Long monitoredEndpointId = monitoredEndpointService.createMonitoredEndpoint(in);
 
-        return ResponseEntity.status(HttpStatus.CREATED).header("Location", "/api/monitored-endpoints/" + monitoredEndpointId).build();
+        return created("/api/monitored-endpoints/" + monitoredEndpointId);
     }
 
     @GetMapping("/{monitoredEndpointId}")
@@ -163,11 +163,15 @@ public class MonitoredEndpointResource {
 
     @Getter @Setter
     static class SaveMonitoredEndpointReqTo {
+        @NotNull
         @NotBlank
         private String name;
+        @NotNull
         @NotBlank
+        @Pattern(regexp = "^(https?://).*", message = "Url must start either with 'https://' or 'http://'")
         private String url;
         @NotNull
+        @Min(value = 1, message = "Monitored interval must be at least 1 second")
         private Integer monitoredInterval;
 
     }
