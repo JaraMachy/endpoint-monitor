@@ -23,7 +23,7 @@ public class MonitoringResultServiceImpl implements MonitoringResultService {
     public List<GetMonitoringResultOut> getLatest10MonitoringResults(Long monitoredEndpointId) {
         Assert.notNull(monitoredEndpointId, "monitoredEndpointId must not be null!");
 
-        List<MonitoringResult> monitoringResults = monitoringResultRepo.findFirst10ByMonitoredEndpoint_Id(monitoredEndpointId);
+        List<MonitoringResult> monitoringResults = monitoringResultRepo.findTop10ByMonitoredEndpoint_IdOrderByDateOfCheckDesc(monitoredEndpointId);
 
         return MonitoringResultMappers.fromMonitoringResults(monitoringResults);
     }
