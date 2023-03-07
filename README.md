@@ -32,3 +32,6 @@ Project was created according to task documentation file `Java_Kotlin_task.pdf`
 * Albus Brumbál &nbsp; &nbsp; &nbsp; brumby007
 * Profesor Snape &nbsp; &nbsp; princdvojikrve123
 * Harry Potter &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; &nbsp; famfrpaljebest
+
+#Contact
+* In case of some problems, you can contact me via email **jarda.machovec@gmail.com**
