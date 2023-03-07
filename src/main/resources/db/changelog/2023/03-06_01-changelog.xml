@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1234567891234-1" author="machovec">
+        <createSequence incrementBy="1" sequenceName="seq_sec_user" startValue="1"/>
+    </changeSet>
+    <changeSet id="1234567891234-2" author="machovec">
+        <createSequence incrementBy="1" sequenceName="seq_monitored_endpoint" startValue="1"/>
+    </changeSet>
+    <changeSet id="1234567891234-3" author="machovec">
+        <createSequence incrementBy="1" sequenceName="seq_monitoring_result" startValue="1"/>
+    </changeSet>
+    <changeSet id="1234567891234-4" author="machovec">
+        <createTable tableName="sec_user">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_sec_user"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1234567891234-5" author="machovec">
+        <createTable tableName="monitored_endpoint">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_monitored_endpoint"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="url" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_of_creation" type="DATETIME"/>
+            <column name="date_of_last_check" type="DATETIME"/>
+            <column name="monitored_interval" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owner_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1234567891234-6" author="machovec">
+        <createTable tableName="monitoring_result">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_monitoring_result"/>
+            </column>
+            <column name="date_of_check" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="returned_http_status_code" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="returned_payload" type="LONGTEXT"/>
+            <column name="monitored_endpoint_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1234567891234-7" author="machovec">
+        <addUniqueConstraint columnNames="username" constraintName="uc_sec_user_username" tableName="sec_user"/>
+    </changeSet>
+    <changeSet id="1234567891234-8" author="machovec">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="monitored_endpoint"
+                                 constraintName="fk_monitored_endpoint_on_sec_user" referencedColumnNames="id"
+                                 referencedTableName="sec_user"/>
+    </changeSet>
+    <changeSet id="1234567891234-9" author="machovec">
+        <addForeignKeyConstraint baseColumnNames="monitored_endpoint_id" baseTableName="monitoring_result"
+                                 constraintName="fk_monitoring_result_on_monitored_endpoint" referencedColumnNames="id"
+                                 referencedTableName="monitored_endpoint"
+                                 deleteCascade="true"/>
+    </changeSet>
+</databaseChangeLog>

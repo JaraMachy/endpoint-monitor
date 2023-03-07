@@ -8,9 +8,6 @@ spring:
     password: endpoint-password
   jpa:
     hibernate:
-      ddl-auto: create-drop                                    # When liquibase migrations enabled - change to 'none'
-    defer-datasource-initialization: true                      # Necessary for db scheme making before the init security data is inserted
-  sql:
-    init:
-      mode: always
-      data-locations: classpath:/db/init/00_sec_users.sql
+      ddl-auto: none                                    # When liquibase migrations enabled - change to 'none'
+  liquibase:
+    enabled: true

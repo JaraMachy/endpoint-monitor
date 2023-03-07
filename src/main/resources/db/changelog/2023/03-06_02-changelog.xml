@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1234567895678-1" author="machovec">
+        <sql dbms="mysql"
+             splitStatements="false"
+             stripComments="true">
+            INSERT INTO sec_user (username, password, email)
+            VALUES ('Albus Brumbál', '$2a$12$104smWkguhwZzpBFS9zvL.866vr9obxBH0zSCHNMjDRXJHYcYc43q', 'brumbal.official@hogwarts.com');
+            </sql>
+    </changeSet>
+    <changeSet id="1234567895678-2" author="machovec">
+        <sql dbms="mysql"
+             splitStatements="false"
+             stripComments="true">
+            INSERT INTO sec_user (username, password, email)
+            VALUES ('Profesor Snape', '$2a$12$Pssld.sXSDH9I2TfvWMQmOVHJmXPHwRSJzQlrwZCJ9x5zYhgXDqeW', 'severustheoneandonly@hogwarts.com');
+        </sql>
+    </changeSet>
+    <changeSet id="1234567895678-3" author="machovec">
+        <sql dbms="mysql"
+             splitStatements="false"
+             stripComments="true">
+            INSERT INTO sec_user (username, password, email)
+            VALUES ('Harry Potter', '$2a$12$8tHqvRmsfAQU96eXNx6S1enH7LVq0NklgZcwZCi3IcQp27O.AWFJu', 'harrythechosenone@hogwarts.com');
+        </sql>
+    </changeSet>
+</databaseChangeLog>
