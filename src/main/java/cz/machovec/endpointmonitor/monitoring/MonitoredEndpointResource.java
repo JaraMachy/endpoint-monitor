@@ -165,13 +165,15 @@ public class MonitoredEndpointResource {
     static class SaveMonitoredEndpointReqTo {
         @NotNull
         @NotBlank
+        @Size(max = 255, message = "Name - maximum is 255 characters")
         private String name;
         @NotNull
         @NotBlank
         @Pattern(regexp = "^(https?://).*", message = "Url must start either with 'https://' or 'http://'")
+        @Size(max = 255, message = "Url - maximum is 255 characters")
         private String url;
         @NotNull
-        @Min(value = 1, message = "Monitored interval must be at least 1 second")
+        @Min(value = 1, message = "Monitored interval - minimum is 1 second")
         private Integer monitoredInterval;
 
     }
